@@ -8,8 +8,8 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 - `beautiful soup` (`pip install bs4`)
 - `selenium` (`pip install selenium`)
 - selenium-driver (either mozilla one or chrome one) - download and copy the driver in the directory in which the file
-  - [get  driver for mozilla firefox](https://github.com/mozilla/geckodriver/releases)
-  - [get selenium driver for google chrome](https://chromedriver.chromium.org/downloads)
+  - [get driver for mozilla firefox](https://github.com/mozilla/geckodriver/releases)
+  - [get driver for google chrome](https://chromedriver.chromium.org/downloads)
 
 ## How to use
 

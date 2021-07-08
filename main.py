@@ -6,8 +6,8 @@ import sys
 import warnings
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.options import OptionsChrome
-from selenium.webdriver.firefox.options import OptionsFirefox
+from selenium.webdriver.chrome.options import Options as OptionsChrome
+from selenium.webdriver.firefox.options import Options as OptionsFirefox
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
