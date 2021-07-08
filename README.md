@@ -14,7 +14,7 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 ## How to use
 
 - satisfy all the requirements needed above
-- either clone `git clone https://github.com/shivanshu-semwal/moodle-automation` or [download this repo](https://github.com/shivanshu-semwal/moodle-automation/archive/refs/heads/master.zip)
+- either clone `git clone https://github.com/shivanshu-semwal/moodle-automation` or [download this repo](https://github.com/shivanshu-semwal/moodle-automation/archive/refs/heads/master.zip) and extract it.
 - copy the `selenium-driver` to the cloned directory
 - open `terminal/cmd` and navigate to the directory
 - run `python3 ./main.py` if you want output in terminal
