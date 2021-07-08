@@ -4,7 +4,7 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 
 ## Requirements
 
-- `python3`
+- `python3` - download [here](https://www.python.org/downloads/)
 - `beautiful soup` (`pip install bs4`)
 - `selenium` (`pip install selenium`)
 - `selenium-driver` (either mozilla one or chrome one)
