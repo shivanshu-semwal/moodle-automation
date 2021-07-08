@@ -7,7 +7,7 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 - `python3`
 - `beautiful soup` (`pip install bs4`)
 - `selenium` (`pip install selenium`)
-- selenium-driver (either mozilla one or chrome one) - download and copy the driver in the directory in which the file
+- selenium-driver (either mozilla one or chrome one)
   - [get driver for mozilla firefox](https://github.com/mozilla/geckodriver/releases)
   - [get driver for google chrome](https://chromedriver.chromium.org/downloads)
 
@@ -24,6 +24,12 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 ```py
 # use chrome, if set to false firefox will be used
 useChrome = True
+
+# path for the driver including the file name
+driverPath = "./chromedriver"
+# driverPath = "./geckodriver"
+# driverPath = "./chromedriver.exe"
+# driverPath = "./geckodriver.exe"
 
 # moodle link
 loginPage = "http://url"

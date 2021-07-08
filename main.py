@@ -17,6 +17,12 @@ from selenium.webdriver.support import expected_conditions
 # use chrome, if set to false firefox will be used
 useChrome = True
 
+# path for the driver including the file name
+driverPath = "./chromedriver"
+# driverPath = "./geckodriver"
+# driverPath = "./chromedriver.exe"
+# driverPath = "./geckodriver.exe"
+
 # moodle link
 loginPage = "http://url"
 
@@ -52,11 +58,11 @@ if __name__ == "__main__":
     if useChrome:
         options = OptionsChrome()
         options.add_argument('--headless')
-        driver = webdriver.Chrome(executable_path="./chromedriver", options=options)
+        driver = webdriver.Chrome(executable_path=driverPath, options=options)
     else:
         options = OptionsFirefox()
         options.add_argument('--headless')
-        driver = webdriver.Firefox(executable_path="./geckodriver", options=options)
+        driver = webdriver.Firefox(executable_path=driverPath, options=options)
 
     try:
         driver.get(loginPage)
