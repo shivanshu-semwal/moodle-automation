@@ -1,0 +1,13 @@
+{
+    "useChrome": true,
+    "driverPath": "./chromedriver",
+    "loginPage": "http://url",
+    "loginData": [
+        "username",
+        "password"
+    ],
+    "showCompleted": false,
+    "markAllComplete": false,
+    "getRedirectedLinks": false,
+    "showSectionHeadings": false
+}

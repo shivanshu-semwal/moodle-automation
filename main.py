@@ -4,6 +4,7 @@ import time
 import re
 import sys
 import warnings
+import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as OptionsChrome
@@ -14,27 +15,65 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-# use chrome, if set to false firefox will be used
-useChrome = True
+
+def generateConfig():
+    print("Generating default config...")
+    config = open('config.json', 'w')
+    config.write("{\n")
+    config.write("\t\"useChrome\": true,\n")
+    config.write("\t\"driverPath\": \"./chromedriver\",\n")
+    config.write("\t\"loginPage\": \"http://url\",\n")
+    config.write("\t\"loginData\": [\n\t\t\"username\",\n\t\t\"password\"\n],\n")
+    config.write("\t\"showCompleted\": true,\n")
+    config.write("\t\"markAllComplete\": false,\n")
+    config.write("\t\"getRedirectedLinks\": true,\n")
+    config.write("\t\"showSectionHeadings\": false\n")
+    config.write("}")
+    config.close()
+
+
+try:
+    config = open('config.json')
+except:
+    print("Config file not present.", file=sys.stderr)
+    generateConfig()
+    exit(1)
+
+data = json.load(config)
+config.close()
+
+# verification of json file
+isValid = True
+isValid = isValid and "useChrome" in data and type(data["useChrome"]) is bool
+isValid = isValid and "driverPath" in data and type(data["driverPath"]) is str
+isValid = isValid and "loginPage" in data and type(data["loginPage"]) is str
+isValid = isValid and "loginData" in data and type(data["loginData"]) is list
+isValid = isValid and all(isinstance(elem, str) for elem in data["loginData"])
+isValid = isValid and "showCompleted" in data and type(data["showCompleted"]) is bool
+isValid = isValid and "markAllComplete" in data and type(data["markAllComplete"]) is bool
+isValid = isValid and "getRedirectedLinks" in data and type(data["getRedirectedLinks"]) is bool
+isValid = isValid and "showSectionHeadings" in data and type(data["showSectionHeadings"]) is bool
+
+if not isValid:
+    generateConfig()
+    print("Invalid config.json file.", file=sys.stderr)
+    exit(1)
+
+# setting variables
+useChrome = data["useChrome"]
+driverPath = data["driverPath"]
+loginPage = data["loginPage"]
+loginData = data["loginData"]
+showCompleted = data["showCompleted"]
+markAllComplete = data["markAllComplete"]
+getRedirectedLinks = data["getRedirectedLinks"]
+showSectionHeadings = data["showSectionHeadings"]
 
 # path for the driver including the file name
-driverPath = "./chromedriver"
+# driverPath = "./chromedriver"
 # driverPath = "./geckodriver"
 # driverPath = "./chromedriver.exe"
 # driverPath = "./geckodriver.exe"
-
-# moodle link
-loginPage = "http://url"
-
-# username and password
-loginData = ["username", "password"]
-
-# show completed topics too
-showCompleted = True
-
-# mark all topics complete
-markAllComplete = False
-
 
 def driverWait(driver, timeout, element, elementValue, login=0):
     """
@@ -45,24 +84,29 @@ def driverWait(driver, timeout, element, elementValue, login=0):
             expected_conditions.presence_of_all_elements_located((element, elementValue)))
     except:
         if login:
-            print("Login Failed.")
-            print("Wrong username or password")
+            print("Login Failed.", file=sys.stderr)
+            print("Wrong username or password.", file=sys.stderr)
         else:
-            print("Connection timed out.")
+            print("Connection timed out.", file=sys.stderr)
         driver.quit()
         exit(0)
 
 
 if __name__ == "__main__":
     # initializing driver
-    if useChrome:
-        options = OptionsChrome()
-        options.add_argument('--headless')
-        driver = webdriver.Chrome(executable_path=driverPath, options=options)
-    else:
-        options = OptionsFirefox()
-        options.add_argument('--headless')
-        driver = webdriver.Firefox(executable_path=driverPath, options=options)
+
+    try:
+        if useChrome:
+            options = OptionsChrome()
+            options.add_argument('--headless')
+            driver = webdriver.Chrome(executable_path=driverPath, options=options)
+        else:
+            options = OptionsFirefox()
+            options.add_argument('--headless')
+            driver = webdriver.Firefox(executable_path=driverPath, options=options)
+    except:
+        print("Invalid driver path.", file=sys.stderr)
+        exit(1)
 
     try:
         driver.get(loginPage)
@@ -137,7 +181,8 @@ if __name__ == "__main__":
         # section-0
         i = 0
         try:
-            print("### Section-" + str(i))
+            if showSectionHeadings:
+                print("### Section-" + str(i))
             while i != -1:
                 ID = "section-" + str(i)
                 a = driver.find_element_by_id(ID)
@@ -152,6 +197,30 @@ if __name__ == "__main__":
                                 print("- [x] [" + title + "]", end='')
                                 url = str(xx.find_element_by_tag_name("a").get_attribute("href"))
                                 print("(" + url + ")", end='')
+                                if getRedirectedLinks:
+                                    file_type_url = str(xx.find_element_by_tag_name(
+                                        "a").find_element_by_tag_name("img").get_attribute("src"))
+                                    # print(file_type_url)
+                                    if file_type_url.endswith("/icon"):
+                                        # generate the link only for drive, youtube, teams
+                                        driver.get(url)
+                                        new_url = driver.current_url
+                                        print(" [link](" + str(new_url) + ")")
+                                        driver.execute_script("window.history.go(-1)")
+                                    elif file_type_url.endswith("/document-24"):
+                                        print(" - word document")
+                                    elif file_type_url.endswith("/pdf-24"):
+                                        print(" - pdf")
+                                    else:
+                                        print()
+                                else:
+                                    print()
+                        else:
+                            title = title[len("Not completed: "):len(title) - len(" Select to mark as not complete.")]
+                            print("- [ ] [" + title + "]", end='')
+                            url = str(xx.find_element_by_tag_name("a").get_attribute("href"))
+                            print("(" + url + ")", end='')
+                            if getRedirectedLinks:
                                 file_type_url = str(xx.find_element_by_tag_name(
                                     "a").find_element_by_tag_name("img").get_attribute("src"))
                                 # print(file_type_url)
@@ -167,24 +236,6 @@ if __name__ == "__main__":
                                     print(" - pdf")
                                 else:
                                     print()
-                        else:
-                            title = title[len("Not completed: "):len(title) - len(" Select to mark as not complete.")]
-                            print("- [ ] [" + title + "]", end='')
-                            url = str(xx.find_element_by_tag_name("a").get_attribute("href"))
-                            print("(" + url + ")", end='')
-                            file_type_url = str(xx.find_element_by_tag_name(
-                                "a").find_element_by_tag_name("img").get_attribute("src"))
-                            # print(file_type_url)
-                            if file_type_url.endswith("/icon"):
-                                # generate the link only for drive, youtube, teams
-                                driver.get(url)
-                                new_url = driver.current_url
-                                print(" [link](" + str(new_url) + ")")
-                                driver.execute_script("window.history.go(-1)")
-                            elif file_type_url.endswith("/document-24"):
-                                print(" - word document")
-                            elif file_type_url.endswith("/pdf-24"):
-                                print(" - pdf")
                             else:
                                 print()
 
