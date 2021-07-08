@@ -6,13 +6,16 @@ import sys
 import warnings
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import OptionsChrome
+from selenium.webdriver.firefox.options import OptionsFirefox
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
+
+# use chrome, if set to false firefox will be used
+useChrome = True
 
 # moodle link
 loginPage = "http://url"
@@ -26,13 +29,11 @@ showCompleted = True
 # mark all topics complete
 markAllComplete = True
 
-options = Options()
-options.add_argument('--headless')
-
-# waits 100 sec before throwing error
-
 
 def driverWait(driver, timeout, element, elementValue, login=0):
+    """
+    Waits {timeout} seconds for elements to load, before timing out, otherwise quit
+    """
     try:
         WebDriverWait(driver, timeout).until(
             expected_conditions.presence_of_all_elements_located((element, elementValue)))
@@ -48,10 +49,15 @@ def driverWait(driver, timeout, element, elementValue, login=0):
 
 if __name__ == "__main__":
     # initializing driver
-    # for firefox
-    # driver = webdriver.Firefox(executable_path="./geckodriver", options=options)
-    # for chrome
-    driver = webdriver.Chrome(executable_path="./chromedriver", options=options)
+    if useChrome:
+        options = OptionsChrome()
+        options.add_argument('--headless')
+        driver = webdriver.Chrome(executable_path="./chromedriver", options=options)
+    else:
+        options = OptionsFirefox()
+        options.add_argument('--headless')
+        driver = webdriver.Firefox(executable_path="./geckodriver", options=options)
+
     try:
         driver.get(loginPage)
         print("Logging in...", file=sys.stderr)

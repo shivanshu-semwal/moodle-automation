@@ -22,6 +22,9 @@ This script can be used with [Moodle LMS](https://moodle.org/).
 - modify these option in  `main.py` script
 
 ```py
+# use chrome, if set to false firefox will be used
+useChrome = True
+
 # moodle link
 loginPage = "http://url"
 
