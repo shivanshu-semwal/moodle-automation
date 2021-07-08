@@ -27,7 +27,7 @@ loginData = ["username", "password"]
 showCompleted = True
 
 # mark all topics complete
-markAllComplete = True
+markAllComplete = False
 
 
 def driverWait(driver, timeout, element, elementValue, login=0):
