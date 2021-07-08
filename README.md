@@ -23,29 +23,22 @@ favorite markdown editor
 
 ## Configuration
 
-- modify these option in  `main.py` script
+- modify these option in  `config.json` file
 
-```py
-# use chrome, if set to false firefox will be used
-useChrome = True
-
-# path for the driver including the file name
-driverPath = "./chromedriver"
-# driverPath = "./geckodriver"
-# driverPath = "./chromedriver.exe"
-# driverPath = "./geckodriver.exe"
-
-# moodle link
-loginPage = "http://url"
-
-# username and password
-loginData = ["username", "password"]
-
-# show completed topics too
-showCompleted = True
-
-# mark all topics complete
-markAllComplete = True
+```json
+{
+    "useChrome": true,
+    "driverPath": "./chromedriver",
+    "loginPage": "http://url",
+    "loginData": [
+        "username",
+        "password"
+    ],
+    "showCompleted": false,
+    "markAllComplete": false,
+    "getRedirectedLinks": false,
+    "showSectionHeadings": false
+}
 ```
 
 [MIT License](./LICENSE)
