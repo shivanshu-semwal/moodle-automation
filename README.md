@@ -37,7 +37,8 @@ favorite markdown editor
     "showCompleted": false,
     "markAllComplete": false,
     "getRedirectedLinks": false,
-    "showSectionHeadings": false
+    "showSectionHeadings": false,
+    "showBrowser": true
 }
 ```
 

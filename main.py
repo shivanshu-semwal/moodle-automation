@@ -27,7 +27,8 @@ def generateConfig():
     config.write("\t\"showCompleted\": true,\n")
     config.write("\t\"markAllComplete\": false,\n")
     config.write("\t\"getRedirectedLinks\": true,\n")
-    config.write("\t\"showSectionHeadings\": false\n")
+    config.write("\t\"showSectionHeadings\": false,\n")
+    config.write("\t\"showBrowser\": true\n")
     config.write("}")
     config.close()
 
@@ -53,6 +54,7 @@ isValid = isValid and "showCompleted" in data and type(data["showCompleted"]) is
 isValid = isValid and "markAllComplete" in data and type(data["markAllComplete"]) is bool
 isValid = isValid and "getRedirectedLinks" in data and type(data["getRedirectedLinks"]) is bool
 isValid = isValid and "showSectionHeadings" in data and type(data["showSectionHeadings"]) is bool
+isValid = isValid and "showBrowser" in data and type(data["showBrowser"]) is bool
 
 if not isValid:
     generateConfig()
@@ -68,12 +70,14 @@ showCompleted = data["showCompleted"]
 markAllComplete = data["markAllComplete"]
 getRedirectedLinks = data["getRedirectedLinks"]
 showSectionHeadings = data["showSectionHeadings"]
+showBrowser = data["showBrowser"]
 
 # path for the driver including the file name
 # driverPath = "./chromedriver"
 # driverPath = "./geckodriver"
 # driverPath = "./chromedriver.exe"
 # driverPath = "./geckodriver.exe"
+
 
 def driverWait(driver, timeout, element, elementValue, login=0):
     """
@@ -99,11 +103,17 @@ if __name__ == "__main__":
         if useChrome:
             options = OptionsChrome()
             options.add_argument('--headless')
-            driver = webdriver.Chrome(executable_path=driverPath, options=options)
+            if showBrowser:
+                driver = webdriver.Chrome(executable_path=driverPath)
+            else:
+                driver = webdriver.Chrome(executable_path=driverPath, options=options)
         else:
             options = OptionsFirefox()
             options.add_argument('--headless')
-            driver = webdriver.Firefox(executable_path=driverPath, options=options)
+            if showBrowser:
+                driver = webdriver.Firefox(executable_path=driverPath)
+            else:
+                driver = webdriver.Firefox(executable_path=driverPath, options=options)
     except:
         print("Invalid driver path.", file=sys.stderr)
         exit(1)
@@ -133,7 +143,8 @@ if __name__ == "__main__":
     temp = driver.find_element_by_id('displaydropdown')
     if(temp.text == 'Card' or temp.text == 'Summary'):
         temp.click()
-        driver.find_elements_by_class_name('dropdown-item')[-2].click()
+        driver.find_elements_by_xpath(
+            "//*[@class='show' or @class='dropdown-menu']")[0].find_elements_by_tag_name("a")[2].click()
     driverWait(driver, 100, By.CLASS_NAME, "progress-bar", 1)
 
     # store subjects
